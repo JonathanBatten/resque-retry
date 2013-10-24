@@ -37,10 +37,12 @@ module ResqueRetry
 
     # Helper methods used by retry tab.
     module Helpers
+    include Resque::Helpers
+
       # builds a retry key for the specified job.
       def retry_key_for_job(job)
         begin
-          klass = Resque.constantize(job['class'])
+          klass = constantize(job['class'])
           if klass.respond_to?(:redis_retry_key)
             klass.redis_retry_key(job['args'])
           else
@@ -69,7 +71,7 @@ module ResqueRetry
 
       # cancels job retry
       def cancel_retry(job)
-        klass = Resque.constantize(job['class'])
+        klass = constantize(job['class'])
         retry_key = retry_key_for_job(job)
         Resque.remove_delayed(klass, *job['args'])
         Resque.redis.del("failure-#{retry_key}")
