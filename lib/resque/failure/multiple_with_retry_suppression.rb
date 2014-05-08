@@ -32,7 +32,7 @@ module Resque
           super
         elsif retry_delay > 0
           data = {
-            :failed_at => Time.now.strftime("%Y/%m/%d %H:%M:%S"),
+            :failed_at => format_time(Time.zone.now),
             :payload   => payload,
             :exception => exception.class.to_s,
             :error     => exception.to_s,
